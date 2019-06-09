@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class Rating {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	private long id;
 	private int likeNo;
 	private int dislikeNo;
