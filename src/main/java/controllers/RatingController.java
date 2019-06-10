@@ -11,18 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 import models.Product;
 import models.Rating;
 import repositories.RatingRepository;
+import services.RatingRepositoryService;
 
 @RestController
 @RequestMapping(path="/rating",produces="application/json")
 @CrossOrigin(origins="*")
 public class RatingController {
-	private RatingRepository ratingRepository;
+	private RatingRepositoryService ratingRepositoryService;
 	@Autowired
-	public RatingController(RatingRepository ratingRepository) {
-		this.ratingRepository=ratingRepository;
+	public RatingController(RatingRepositoryService ratingRepositoryService) {
+		this.ratingRepositoryService=ratingRepositoryService;
 	}
 	@GetMapping("/product")
-	public @ResponseBody Rating getRating(@RequestParam("product") Product product) {
-		return this.ratingRepository.findByProduct(product);
+	public Rating getRating(@RequestParam("product") Product product) {
+		return this.ratingRepositoryService.findByProduct(product);
 	}
 }

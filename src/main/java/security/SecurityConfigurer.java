@@ -43,7 +43,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter{
         	.and()
         .formLogin()
         	.loginProcessingUrl("/users/login")
-        	.permitAll();
+        	.and().logout().logoutUrl("/users/logout");
     
 	}
 	@Bean

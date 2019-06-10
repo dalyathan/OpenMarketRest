@@ -13,4 +13,16 @@ public class Product {
 	private double price;
 	private String date;
 	private String userName;
+	
+	public Product(models.Product productModel) {
+		this.id=productModel.getId();
+		this.imagePath=productModel.getImagePath();
+		this.name=productModel.getName();
+		this.type=productModel.getType();
+		this.description=productModel.getDescription();
+		this.amount=productModel.getAmount();
+		this.price=productModel.getPrice();
+		this.date=productModel.getDate();
+		this.userName=productModel.getOwner().getUsername();
+	}
 }

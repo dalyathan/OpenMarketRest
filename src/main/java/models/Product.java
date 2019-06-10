@@ -29,10 +29,11 @@ public class Product{
 	private double price;
 	@OneToMany(mappedBy="myProducts")
 	private User owner;
-	//@OneToOne(mappedBy="product")
-	//private Rating rating;
+	@OneToOne(mappedBy="product")
+	private Rating rating;
 	@OneToMany(mappedBy="productCommentJoin")
 	private Set<Comment> productCommentJoin;
+	private String date;
 	
 	public Product(retrofitclassesmapper.Product product) {
 		this.id=product.getId();

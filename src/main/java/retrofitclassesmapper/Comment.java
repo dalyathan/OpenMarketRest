@@ -8,4 +8,10 @@ public class Comment {
 	private String commentdata;
 	private String dateOfComment;
 	private String userName;
+	public Comment(models.Comment commentModel) {
+		this.id=commentModel.getId();
+		this.commentdata=commentModel.getCommentdata();
+		this.dateOfComment=commentModel.getDateOfComment();
+		this.userName=commentModel.getUserName();
+	}
 }

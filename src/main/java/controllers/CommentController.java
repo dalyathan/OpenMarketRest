@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,72 +23,96 @@ import models.Comment;
 import models.Product;
 import repositories.CommentRepository;
 import repositories.ProductRepository;
+import services.CommentRepositoryService;
+import services.ProductRepositoryService;
 
 @RestController
 @RequestMapping(path="/comment",produces="application/json",consumes="application/json")
 @CrossOrigin(origins="*")
 public class CommentController {
-	private CommentRepository commentRepository;
-	private ProductRepository productRepsitory;
+	private CommentRepositoryService commentRepositoryService;
+	private ProductRepositoryService productRepsitoryService;
+	
+	
 	@Autowired
-	public CommentController(CommentRepository commentRepository,ProductRepository productRepsitory) {
-		this.commentRepository=commentRepository;
-		this.productRepsitory=productRepsitory;
+	public CommentController(CommentRepositoryService commentRepositoryService,ProductRepositoryService productRepsitoryService) {
+		this.commentRepositoryService=commentRepositoryService;
+		this.productRepsitoryService=productRepsitoryService;
 	}
+	
+	
 	//from retrofit
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Object> deleteComment(@PathVariable("id") long id) {
-		if(this.commentRepository.existsById(id)) {
-			this.commentRepository.deleteById(id);
+		if(this.commentRepositoryService.existsById(id)) {
+			this.commentRepositoryService.deleteById(id);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
+	
+	
 	@PostMapping("/save/{product_id}")
 	public ResponseEntity<Object> saveComment(@RequestBody retrofitclassesmapper.Comment comment,
 			@PathVariable("product_id") long id) {
 		models.Comment commentEntity=new Comment(comment);
-		commentEntity.setProduct(this.productRepsitory.findById(id));
-		this.commentRepository.save(commentEntity);
+		commentEntity.setProduct(this.productRepsitoryService.findById(id));
+		this.commentRepositoryService.save(commentEntity);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
+	
+	
 	@GetMapping("/username/{username}")
-	public ResponseEntity<List<Comment>> getCommentByUsername(@PathVariable("username") String username){
-		List<Comment> comments=this.commentRepository.findByUserName(username);
+	public ResponseEntity<List<retrofitclassesmapper.Comment>> getCommentByUsername(@PathVariable("username") String username){
+		List<Comment> comments=this.commentRepositoryService.findByUserName(username);
 		if(comments!=null) {
-			return new ResponseEntity<>(comments,HttpStatus.OK);
+			List<retrofitclassesmapper.Comment> mappedComments=new ArrayList<>();
+			for(Comment comment:comments) {
+				mappedComments.add(new retrofitclassesmapper.Comment(comment));
+			}
+			return new ResponseEntity<>(mappedComments,HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
+	
+	
 	@PutMapping("/update/{id}")
 	public ResponseEntity<Object> updateComment(@RequestBody retrofitclassesmapper.Comment comment,@PathVariable("id") long id) {
-		Optional<Comment> possibleComment=this.commentRepository.findById(id);
+		Optional<Comment> possibleComment=this.commentRepositoryService.findById(id);
 		if(possibleComment.isPresent()) {
 			Comment storedComment=possibleComment.get();
 			storedComment.updateComment(comment);
-			this.commentRepository.save(storedComment);
+			this.commentRepositoryService.save(storedComment);
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
+	
+	
 	@GetMapping("/{id}")
-	public ResponseEntity<Comment> getCommentById(@PathVariable("id") long id) {
-		Optional<Comment> possibleComment=this.commentRepository.findById(id);
+	public ResponseEntity<retrofitclassesmapper.Comment> getCommentById(@PathVariable("id") long id) {
+		Optional<Comment> possibleComment=this.commentRepositoryService.findById(id);
 		if(possibleComment.isPresent()) {
-			return new ResponseEntity<>(possibleComment.get(),HttpStatus.OK);
+			return new ResponseEntity<>(new retrofitclassesmapper.Comment(possibleComment.get()),HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
+	
+	
 	@GetMapping("/products/{product_id}")
-	public ResponseEntity<List<Comment>> getCommentsForProduct(@PathVariable("product_id") long id){
-		Product product=this.productRepsitory.findById(id);
+	public ResponseEntity<List<retrofitclassesmapper.Comment>> getCommentsForProduct(@PathVariable("product_id") long id){
+		Product product=this.productRepsitoryService.findById(id);
 		if(product==null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		List<Comment> comments=this.commentRepository.findByProduct(product);
+		List<Comment> comments=this.commentRepositoryService.findByProduct(product);
 		if(comments==null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(comments,HttpStatus.OK);
+		List<retrofitclassesmapper.Comment> mappedComments=new ArrayList<>();
+		for(Comment comment:comments) {
+			mappedComments.add(new retrofitclassesmapper.Comment(comment));
+		}
+		return new ResponseEntity<>(mappedComments,HttpStatus.OK);
 	}
 }

@@ -12,4 +12,15 @@ public class User {
 	private String phoneNo;
 	private String pictureId;
 	private String locationId;
+	
+	
+	public User(models.User userModel) {
+		this.id=userModel.getId();
+		this.fullName=userModel.getFullName();
+		this.username=userModel.getUsername();
+		this.email=userModel.getEmail();
+		this.phoneNo=userModel.getPhoneNo();
+		this.pictureId=userModel.getPictureId();
+		this.locationId=userModel.getLocationId();
+	}
 }
