@@ -1,6 +1,7 @@
 package controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,7 +13,8 @@ import models.Rating;
 import repositories.RatingRepository;
 
 @RestController
-@RequestMapping("/rating")
+@RequestMapping(path="/rating",produces="application/json")
+@CrossOrigin(origins="*")
 public class RatingController {
 	private RatingRepository ratingRepository;
 	@Autowired
